@@ -25,22 +25,35 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: stretch;
   padding: 2rem;
+  height: 100vh;
+  box-sizing: border-box;
+  gap: 1em;
+}
+
+div#app > * {
+  width: 400px;
+  box-sizing: border-box;
+}
+
+@media screen and (max-aspect-ratio: 1) {
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+  }
+
+  #app {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0 auto;
+  }
 }
 
 input[type="button"] + input[type="button"] {
@@ -97,7 +110,8 @@ video {
 }
 #result {
   margin-top: 15px;
-  width: 100%;
+  /* width: 100%; */
+  width: fit-content;
   min-height: 300px;
   border: 1px dashed darkcyan;
   padding: 8px;
@@ -111,4 +125,16 @@ video {
 #sources {
   max-height: 88px;
   overflow: auto;
+}
+
+#waveCanvas {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100vw !important;
+  height: 400px;
+  z-index: -1;
 }

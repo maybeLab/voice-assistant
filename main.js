@@ -1,8 +1,10 @@
 import "./style.css";
 import stt from "./src/stt";
 import { getSupportedLocales, resetStatus } from "./src/utils";
+import Wave from "./src/wave";
 
 document.querySelector("#app").innerHTML = `
+  <canvas id="waveCanvas"></canvas>
   <fieldset id="micList">
     <legend>Choose your audio input</legend>
   </fieldset>
@@ -69,21 +71,35 @@ document.querySelector("#more-language").addEventListener("click", async functio
   this.style.display = "none";
 });
 
+let wave;
+
 document.querySelector("#mic").addEventListener("click", async function (e) {
+  if (!wave) {
+    wave = new Wave(document.querySelector("#waveCanvas"));
+  }
+  wave.start();
   const sourceLanguages = getSourceLanguages();
   this.disabled = true;
+  const isContinuous = parseInt(document.querySelector("[name=continuous]:checked").value);
   const recognizer = await stt({
     type: "mic",
-    isContinuous: parseInt(document.querySelector("[name=continuous]:checked").value),
+    isContinuous,
     sourceLanguages,
   });
-  document.querySelector("#stopMic").addEventListener(
-    "click",
-    function () {
-      recognizer.stopContinuousRecognitionAsync(resetStatus);
-    },
-    { once: true }
-  );
+  if (!isContinuous) {
+    recognizer.recognized = () => {
+      wave.stop();
+    };
+  } else {
+    document.querySelector("#stopMic").addEventListener(
+      "click",
+      function () {
+        recognizer.stopContinuousRecognitionAsync(resetStatus);
+        wave.stop();
+      },
+      { once: true }
+    );
+  }
 });
 
 document.addEventListener("DOMContentLoaded", async () => {

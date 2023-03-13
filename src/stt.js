@@ -54,7 +54,6 @@ export default async function ({ type = "file", file, isContinuous, sourceLangua
     recognizer.recognizeOnceAsync(
       function (result) {
         console.debug(result);
-
         recognizer.close();
         recognizer = undefined;
         writeResult(result.text);
