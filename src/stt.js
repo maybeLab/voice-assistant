@@ -22,12 +22,17 @@ export default async function ({ type = "file", file, isContinuous, sourceLangua
   }
 
   // Create the speech recognizer.
-  // let recognizer = new SpeechRecognizer(speechConfig, audioConfig);
-  let recognizer = SpeechRecognizer.FromConfig(
-    speechConfig,
-    AutoDetectSourceLanguageConfig.fromLanguages(sourceLanguages),
-    audioConfig
-  );
+  let recognizer;
+  if (sourceLanguages.length === 1) {
+    speechConfig.speechRecognitionLanguage = sourceLanguages.toString();
+    recognizer = new SpeechRecognizer(speechConfig, audioConfig);
+  } else {
+    recognizer = SpeechRecognizer.FromConfig(
+      speechConfig,
+      AutoDetectSourceLanguageConfig.fromLanguages(sourceLanguages),
+      audioConfig
+    );
+  }
   // Start the recognizer and wait for a result.
   // 启动语音识别，并在识别第一个言语后停止。 该任务返回作为结果的识别文本。
   // 注意：识别第一个言语后，RecognizeOnceAsync () 将返回 ，因此它仅适用于单次识别，如命令或查询。

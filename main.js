@@ -30,8 +30,8 @@ document.querySelector("#app").innerHTML = `
       <label for="continuous"><input id="continuous" type="radio" name="continuous" value="1"/>Continuous</label>
       <label for="once"><input id="once" type="radio" name="continuous" value="0" checked />Once</label>
       <br>
-      <input type="button" value="Start" id="mic">
-      <input type="button" value="End" id="stopMic" disabled>
+      <input type="submit" value="Start" id="mic" class="primary">
+      <input type="submit" value="End" id="stopMic" disabled class="primary">
       
     </fieldset>
   </fieldset>
@@ -57,6 +57,7 @@ document.querySelector("#input-file").addEventListener("change", (e) => {
 });
 
 document.querySelector("#more-language").addEventListener("click", async function (e) {
+  this.disabled = true;
   const { locales } = await getSupportedLocales();
   locales
     .filter((e) => !/^(zh-CN|en-US)$/.test(e))
