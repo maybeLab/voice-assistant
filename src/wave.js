@@ -5,12 +5,14 @@ export default class MicWave {
   canvasHeight = 0;
   constructor(canvasDOM) {
     this.canvasDOM = canvasDOM;
-    this.canvasWidth = document.querySelector("#waveCanvas").getBoundingClientRect().width;
-    this.canvasHeight = document.querySelector("#waveCanvas").getBoundingClientRect().height;
+    this.canvasWidth = canvasDOM.getBoundingClientRect().width;
+    this.canvasHeight = canvasDOM.getBoundingClientRect().height;
+    canvasDOM.width = this.canvasWidth;
+    canvasDOM.height = this.canvasHeight;
     this.canvasCtx = canvasDOM.getContext("2d");
     this.audioCtx = new AudioContext();
     this.analyser = this.audioCtx.createAnalyser();
-    // this.analyser.fftSize = 2048;
+    this.analyser.fftSize = Math.pow(2, Math.round(Math.log(this.canvasWidth) / Math.log(2)));
     this.init();
   }
   async init() {
@@ -27,9 +29,9 @@ export default class MicWave {
   }
   stop() {
     this.status = false;
-    this.clearCanvas()
+    this.clearCanvas();
   }
-  clearCanvas(){
+  clearCanvas() {
     this.canvasCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
   }
   getAnalyseData() {
@@ -42,15 +44,15 @@ export default class MicWave {
     const dataArray = this.getAnalyseData();
     const bufferLength = dataArray.length;
     const ctx = this.canvasCtx;
-    this.clearCanvas()
+    this.clearCanvas();
     // 设定波形绘制颜色
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.24)";
+    ctx.strokeStyle = "rgba(116, 123, 255, 0.4)";
     ctx.beginPath();
-    const sliceWidth = (this.canvasWidth * 1.0) / bufferLength; // 一个点占多少位置，共有bufferLength个点要绘制
+    const sliceWidth = this.canvasWidth / bufferLength; // 一个点占多少位置，共有bufferLength个点要绘制
     let x = 0; // 绘制点的x轴位置
     for (let i = 0; i < bufferLength; i++) {
-      const v = dataArray[i] / 128.0;
+      const v = dataArray[i] / 128;
       const y = (v * this.canvasHeight) / 2;
       if (i === 0) {
         // 第一个点
@@ -66,6 +68,8 @@ export default class MicWave {
     ctx.stroke();
     if (this.status) {
       window.requestAnimationFrame(this.draw.bind(this));
+    }else{
+      this.clearCanvas();
     }
   }
 }
