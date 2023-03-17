@@ -1,42 +1,11 @@
 import "./style.css";
-import stt from "./src/stt";
-import { getSupportedLocales, resetStatus } from "./src/utils";
+import AzureStt from "./src/stt/azure";
+import NativeStt from "./src/stt/native";
+import { getSupportedLocales, resetStatus, writeResult } from "./src/utils";
 import Wave from "./src/wave";
+import html from "./src/html.jsx";
 
-document.querySelector("#app").innerHTML = `
-  <canvas id="waveCanvas"></canvas>
-  <fieldset id="micList">
-    <legend>Choose your audio input</legend>
-  </fieldset>
-  <fieldset id="speakerList" disabled>
-    <legend>Choose your audio output</legend>
-  </fieldset>
-  <fieldset>
-    <legend>STT</legend>
-    <label for="input-file">File: <input type="file" name="" id="input-file" accept=".wav"></label>
-    <fieldset id="sources">
-      <legend>Source</legend>
-      <label for="language_default0">
-        <input type="checkbox" id="language_default0" name="source-languages" value="en-US" checked>en-US</input>
-      </label>
-      <label for="language_default1">
-        <input type="checkbox" id="language_default1" name="source-languages" value="zh-CN" checked>zh-CN</input>
-      </label>
-        <input type="button" id="more-language" value="More" />
-    </fieldset>
-    <fieldset>
-      <legend>Mic</legend>
-      Ways: 
-      <label for="continuous"><input id="continuous" type="radio" name="continuous" value="1"/>Continuous</label>
-      <label for="once"><input id="once" type="radio" name="continuous" value="0" checked />Once</label>
-      <br>
-      <input type="submit" value="Start" id="mic" class="primary">
-      <input type="submit" value="End" id="stopMic" disabled class="primary">
-      
-    </fieldset>
-  </fieldset>
-  <div id="result" contenteditable>  </div>
-`;
+document.querySelector("#app").innerHTML = html;
 
 window[`_current_mic`] = "default";
 window[`_current_speaker`] = "default";
@@ -52,9 +21,19 @@ const getSourceLanguages = () => {
 };
 
 document.querySelector("#input-file").addEventListener("change", (e) => {
+  writeResult("Uploading...");
   const sourceLanguages = getSourceLanguages();
-  stt({ type: "file", file: e.target.files[0], isContinuous: 0, sourceLanguages });
+  AzureStt({ type: "file", file: e.target.files[0], isContinuous: 0, sourceLanguages });
 });
+
+document.querySelector("#native-mic").addEventListener("click", async function (e) {
+  const isContinuous = parseInt(document.querySelector("[name=native-continuous]:checked").value);
+  const recognizer = await NativeStt({
+    type: "mic",
+    isContinuous,
+    // sourceLanguages,
+  });
+})
 
 document.querySelector("#more-language").addEventListener("click", async function (e) {
   this.disabled = true;
@@ -82,7 +61,7 @@ document.querySelector("#mic").addEventListener("click", async function (e) {
   const sourceLanguages = getSourceLanguages();
   this.disabled = true;
   const isContinuous = parseInt(document.querySelector("[name=continuous]:checked").value);
-  const recognizer = await stt({
+  const recognizer = await AzureStt({
     type: "mic",
     isContinuous,
     sourceLanguages,
@@ -104,22 +83,6 @@ document.querySelector("#mic").addEventListener("click", async function (e) {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-  // const video = document.createElement("video");
-  // document.body.append(video);
-  // video.onloadedmetadata = function () {
-  //   video.play();
-  // };
-  // video.srcObject = stream;
-  // const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  // const audio = document.createElement("audio");
-  // audio.controls = true;
-  // document.body.append(audio);
-  // audio.onloadedmetadata = function () {
-  //   audio.play();
-  // };
-  // audio.srcObject = stream;
-
   const list = await navigator.mediaDevices.enumerateDevices();
   list
     .filter((e) => e.kind === "audioinput")

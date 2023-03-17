@@ -4,14 +4,14 @@ import {
   AutoDetectSourceLanguageConfig,
   ResultReason,
 } from "microsoft-cognitiveservices-speech-sdk";
-import { getSpeechConfigByToken, writeResult, writeError, resetStatus } from "./utils";
+import { getSpeechConfigByToken, writeResult, writeError, resetStatus } from "../utils";
 
 export default async function ({ type = "file", file, isContinuous, sourceLanguages }) {
   let isMic = type === "mic";
   const speechConfig = await getSpeechConfigByToken();
 
   // We are done with the setup
-  console.log("Now recognizing from: " + type, sourceLanguages);
+  writeResult("Now recognizing from: " + type, sourceLanguages);
 
   let audioConfig;
 

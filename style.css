@@ -31,11 +31,14 @@ body {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  align-items: stretch;
+  place-content: start;
   padding: 2rem;
   height: 100vh;
   box-sizing: border-box;
   gap: 1em;
+}
+#app > fieldset:first-of-type {
+  margin-top: -12px;
 }
 
 div#app > * {
@@ -56,20 +59,17 @@ div#app > * {
   }
 }
 
-input[type="button"] + input[type="button"],
-input[type="submit"] + input[type="submit"] {
-  margin-left: 4px;
-}
+input::file-selector-button,
 input[type="button"],
 input[type="submit"] {
-  vertical-align: middle;
+  vertical-align: text-bottom;
   border-radius: 4px;
   border: 1px solid transparent;
   padding: 0.3em 0.6em;
   font-size: 0.8em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #2f2f2f;
+  background-color: #3a3a3a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -115,21 +115,17 @@ fieldset {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 6px;
 }
 
 fieldset > fieldset {
   align-self: stretch;
   display: inline-flex;
   flex-direction: row;
+  gap: 6px;
 }
 
-video {
-  margin-top: 15px;
-  width: 100%;
-}
 #result {
-  margin-top: 15px;
   /* width: 100%; */
   width: fit-content;
   min-height: 300px;
@@ -137,6 +133,18 @@ video {
   padding: 8px;
   box-sizing: border-box;
   overflow-y: auto;
+  font-size: 14px;
+}
+
+#result > div,
+#result > p {
+  margin: 0.2em 0;
+  padding: 0 0.4em;
+}
+
+#result > p:nth-child(2n-1),
+#result > div:nth-child(2n-1) {
+  background-color: #3a3a3a8a;
 }
 
 #result::before {

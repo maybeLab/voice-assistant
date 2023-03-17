@@ -1,8 +1,8 @@
 export default class MicWave {
-  audioInput = null;
-  status = false;
+  drawStatus = false;
   canvasWidth = 0;
   canvasHeight = 0;
+  audioTracks = null;
   constructor(canvasDOM) {
     this.canvasDOM = canvasDOM;
     this.canvasWidth = canvasDOM.getBoundingClientRect().width;
@@ -13,22 +13,21 @@ export default class MicWave {
     this.audioCtx = new AudioContext();
     this.analyser = this.audioCtx.createAnalyser();
     this.analyser.fftSize = Math.pow(2, Math.round(Math.log(this.canvasWidth) / Math.log(2)));
-    this.init();
   }
-  async init() {
+  async start() {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
-    this.audioInput = this.audioCtx.createMediaStreamSource(stream);
-    this.audioInput.connect(this.analyser);
+    // Is there a memory leak here?
+    this.audioCtx.createMediaStreamSource(stream).connect(this.analyser);
     // analyser.connect(this.audioCtx.destination);
-  }
-  start() {
-    this.status = true;
+    this.audioTracks = stream.getAudioTracks()[0];
+    this.drawStatus = true;
     this.draw();
   }
   stop() {
-    this.status = false;
+    this.drawStatus = false;
+    this.audioTracks.stop();
     this.clearCanvas();
   }
   clearCanvas() {
@@ -66,9 +65,9 @@ export default class MicWave {
     }
     ctx.lineTo(this.canvasWidth, this.canvasHeight / 2);
     ctx.stroke();
-    if (this.status) {
+    if (this.drawStatus) {
       window.requestAnimationFrame(this.draw.bind(this));
-    }else{
+    } else {
       this.clearCanvas();
     }
   }
