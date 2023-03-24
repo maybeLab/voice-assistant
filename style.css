@@ -41,7 +41,8 @@ body {
   margin-top: -12px;
 }
 
-div#app > * {
+div#app > fieldset,
+div#app > div {
   width: 400px;
   box-sizing: border-box;
 }
@@ -126,8 +127,7 @@ fieldset > fieldset {
 }
 
 #result {
-  /* width: 100%; */
-  width: fit-content;
+  width: 400px;
   min-height: 300px;
   border: 1px dashed darkcyan;
   padding: 8px;
@@ -140,6 +140,8 @@ fieldset > fieldset {
 #result > p {
   margin: 0.2em 0;
   padding: 0 0.4em;
+  white-space: nowrap;
+  width: fit-content;
 }
 
 #result > p:nth-child(2n-1),

@@ -20,6 +20,10 @@ const getSourceLanguages = () => {
   ).map((e) => e.value);
 };
 
+const getNativeLanguages = () => {
+  return document.querySelector("#native-langs").value;
+};
+
 document.querySelector("#input-file").addEventListener("change", (e) => {
   writeResult("Uploading...");
   const sourceLanguages = getSourceLanguages();
@@ -38,7 +42,7 @@ document
       wave = new Wave(document.querySelector("#waveCanvas"));
     }
     wave.start();
-    const sourceLanguages = getSourceLanguages();
+    const sourceLanguages = getNativeLanguages();
     this.disabled = true;
     const isContinuous = parseInt(
       document.querySelector("[name=native-continuous]:checked").value
@@ -48,16 +52,15 @@ document
       isContinuous,
       sourceLanguages,
     });
+    recognizer.addEventListener("end", () => {
+      wave.stop();
+    });
     if (!isContinuous) {
-      recognizer.addEventListener("onend", () => {
-        wave.stop();
-      });
     } else {
       document.querySelector("#native-stopMic").addEventListener(
         "click",
         function () {
           recognizer.stop();
-          wave.stop();
         },
         { once: true }
       );

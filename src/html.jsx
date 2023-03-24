@@ -1,3 +1,7 @@
+import { langs as nativeLangsMap } from "./stt/native-lang.js";
+
+const DEFAULT_NATIVE_LANG = "en-US";
+
 export default `
     <canvas id="waveCanvas"></canvas>
     <fieldset id="micList">
@@ -35,7 +39,20 @@ export default `
         Ways:
         <label for="native-continuous"><input id="native-continuous" type="radio" name="native-continuous" checked value="1"/>Continuous</label>
         <label for="native-once"><input id="native-once" type="radio" name="native-continuous" value="0" />Once</label>
-      </section>
+        </section>
+        <section>
+          Languages:
+          <label for="native-langs">
+            <select name="native-langs" id="native-langs">
+            ${Array.from(nativeLangsMap).map(
+              ([code, label]) =>
+                `<option ${
+                  code === DEFAULT_NATIVE_LANG ? "selected" : ""
+                } value="${code}">${label}</option>`
+            )}
+            </select>
+          </label>
+        </section>
       <section>
         <input type="submit" value="Start" id="native-mic" class="primary" />
         <input type="submit" value="End" id="native-stopMic" disabled class="primary" />

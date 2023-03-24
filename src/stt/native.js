@@ -1,4 +1,3 @@
-// NativeStt({ type: "file", file: e.target.files[0], isContinuous: 0 });
 import {
   getSpeechConfigByToken,
   writeResult,
@@ -8,48 +7,43 @@ import {
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
-const SpeechGrammarList =
-  window.SpeechGrammarList || window.webkitSpeechGrammarList;
-const SpeechRecognitionEvent =
-  window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 
-export default function ({ type = "file", file, isContinuous }) {
+export default function ({ type = "file", isContinuous, sourceLanguages }) {
   let isMic = type === "mic";
   const recognition = new SpeechRecognition();
   recognition.continuous = isContinuous;
-  recognition.lang = "en-US";
-  recognition.lang = "zh-CN";
+  recognition.lang = sourceLanguages;
   recognition.interimResults = true;
-
   recognition.maxAlternatives = 1;
+
   recognition.onstart = function (event) {
     document.querySelector("#native-stopMic").disabled = false;
   };
   recognition.onresult = function (event) {
     const lastIndex = event.results.length - 1;
-    // const transcript = event.results[0][0].transcript;
-    const transcript = Array.from(event.results)
-      .map((e) => e[0].transcript)
-      .join("");
+    const transcript = event.results[lastIndex][0].transcript;
     console.debug(event.results);
     writeResult(
-      `Confidence: 
+      `C: 
         ${Math.floor(event.results[lastIndex][0].confidence * 1e4) / 100}%,
-        ${transcript}`
+        ${
+          event.results[lastIndex]?.isFinal
+            ? `<span style="color:green;">${transcript}</span>`
+            : transcript
+        }`
     );
   };
   recognition.onspeechend = function () {
     console.debug("onspeechend");
-    // recognition.stop();
   };
   recognition.onend = function () {
     console.debug("onend");
-    document.querySelector("#native-stopMic").disabled = true
-    document.querySelector("#native-mic").disabled = false
-    // recognition.stop();
+    document.querySelector("#native-stopMic").disabled = true;
+    document.querySelector("#native-mic").disabled = false;
   };
   recognition.onerror = function (event) {
-    // event.error === 'no-speech' || 'audio-capture' || 'not-allowed'
+    // event.error === 'no-speech' || 'audio-capture' || 'not-allowed' ||
+    // 'service-not-allowed' safari not support zh-yue
     // solution: https://support.google.com/chrome/bin/answer.py?hl=en&answer=1407892
     console.error("Error occurred in recognition: " + event.error);
   };
@@ -83,5 +77,5 @@ export default function ({ type = "file", file, isContinuous }) {
       });
     };
   }
-  return recognition
+  return recognition;
 }
