@@ -4,9 +4,19 @@ import {
   AutoDetectSourceLanguageConfig,
   ResultReason,
 } from "microsoft-cognitiveservices-speech-sdk";
-import { getSpeechConfigByToken, writeResult, writeError, resetStatus } from "../utils";
+import {
+  getSpeechConfigByToken,
+  writeResult,
+  writeError,
+  resetStatus,
+} from "../utils";
 
-export default async function ({ type = "file", file, isContinuous, sourceLanguages }) {
+export default async function ({
+  type = "file",
+  file,
+  isContinuous,
+  sourceLanguages,
+}) {
   let isMic = type === "mic";
   const speechConfig = await getSpeechConfigByToken();
 
@@ -40,7 +50,10 @@ export default async function ({ type = "file", file, isContinuous, sourceLangua
   if (isContinuous) {
     document.querySelector("#stopMic").disabled = false;
     recognizer.sessionStarted = console.debug.bind(this, "sessionStarted");
-    recognizer.speechStartDetected = console.debug.bind(this, "speechStartDetected");
+    recognizer.speechStartDetected = console.debug.bind(
+      this,
+      "speechStartDetected"
+    );
 
     recognizer.recognizing = console.debug.bind(this, "recognizing");
     recognizer.recognized = (_, event) => {
@@ -49,7 +62,10 @@ export default async function ({ type = "file", file, isContinuous, sourceLangua
         writeResult(event.result.text);
       }
     };
-    recognizer.speechEndDetected = console.debug.bind(this, "speechEndDetected");
+    recognizer.speechEndDetected = console.debug.bind(
+      this,
+      "speechEndDetected"
+    );
     recognizer.sessionStopped = console.debug.bind(this, "sessionStopped");
 
     recognizer.canceled = console.debug.bind(this, "canceled");

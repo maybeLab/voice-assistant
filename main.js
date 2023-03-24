@@ -15,41 +15,72 @@ window.onChangeConfig = (type, id) => {
 };
 
 const getSourceLanguages = () => {
-  return Array.from(document.querySelectorAll("[name=source-languages]:checked")).map(
-    (e) => e.value
-  );
+  return Array.from(
+    document.querySelectorAll("[name=source-languages]:checked")
+  ).map((e) => e.value);
 };
 
 document.querySelector("#input-file").addEventListener("change", (e) => {
   writeResult("Uploading...");
   const sourceLanguages = getSourceLanguages();
-  AzureStt({ type: "file", file: e.target.files[0], isContinuous: 0, sourceLanguages });
+  AzureStt({
+    type: "file",
+    file: e.target.files[0],
+    isContinuous: 0,
+    sourceLanguages,
+  });
 });
 
-document.querySelector("#native-mic").addEventListener("click", async function (e) {
-  const isContinuous = parseInt(document.querySelector("[name=native-continuous]:checked").value);
-  const recognizer = await NativeStt({
-    type: "mic",
-    isContinuous,
-    // sourceLanguages,
+document
+  .querySelector("#native-mic")
+  .addEventListener("click", async function (e) {
+    if (!wave) {
+      wave = new Wave(document.querySelector("#waveCanvas"));
+    }
+    wave.start();
+    const sourceLanguages = getSourceLanguages();
+    this.disabled = true;
+    const isContinuous = parseInt(
+      document.querySelector("[name=native-continuous]:checked").value
+    );
+    const recognizer = await NativeStt({
+      type: "mic",
+      isContinuous,
+      sourceLanguages,
+    });
+    if (!isContinuous) {
+      recognizer.addEventListener("onend", () => {
+        wave.stop();
+      });
+    } else {
+      document.querySelector("#native-stopMic").addEventListener(
+        "click",
+        function () {
+          recognizer.stop();
+          wave.stop();
+        },
+        { once: true }
+      );
+    }
   });
-})
 
-document.querySelector("#more-language").addEventListener("click", async function (e) {
-  this.disabled = true;
-  const { locales } = await getSupportedLocales();
-  locales
-    .filter((e) => !/^(zh-CN|en-US)$/.test(e))
-    .map((locale, index) => {
-      this.insertAdjacentHTML(
-        "beforeBegin",
-        `<label for="language_${index}">
+document
+  .querySelector("#more-language")
+  .addEventListener("click", async function (e) {
+    this.disabled = true;
+    const { locales } = await getSupportedLocales();
+    locales
+      .filter((e) => !/^(zh-CN|en-US)$/.test(e))
+      .map((locale, index) => {
+        this.insertAdjacentHTML(
+          "beforeBegin",
+          `<label for="language_${index}">
         <input type="checkbox" id="language_${index}" name="source-languages" value="${locale}">${locale}</input>
       </label>`
-      );
-    });
-  this.style.display = "none";
-});
+        );
+      });
+    this.style.display = "none";
+  });
 
 let wave;
 
@@ -60,7 +91,9 @@ document.querySelector("#mic").addEventListener("click", async function (e) {
   wave.start();
   const sourceLanguages = getSourceLanguages();
   this.disabled = true;
-  const isContinuous = parseInt(document.querySelector("[name=continuous]:checked").value);
+  const isContinuous = parseInt(
+    document.querySelector("[name=continuous]:checked").value
+  );
   const recognizer = await AzureStt({
     type: "mic",
     isContinuous,
@@ -95,7 +128,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             i === 0 ? "checked" : ""
           } type="radio" name="audioinput" id="mic_${e.deviceId}" value="${
             e.deviceId
-          }" onclick="onChangeConfig('mic','${e.deviceId}')"/>${e.label}</label>`
+          }" onclick="onChangeConfig('mic','${e.deviceId}')"/>${
+            e.label
+          }</label>`
         );
     });
   list
@@ -109,7 +144,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             i === 0 ? "checked" : ""
           } type="radio" name="audiooutput" id="speaker_${e.deviceId}" value="${
             e.deviceId
-          }" onclick="onChangeConfig('speaker','${e.deviceId}')"/>${e.label}</label>`
+          }" onclick="onChangeConfig('speaker','${e.deviceId}')"/>${
+            e.label
+          }</label>`
         );
     });
 });

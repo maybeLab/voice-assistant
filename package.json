@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "prettier --write ."
   },
   "devDependencies": {
+    "husky": "^8.0.3",
+    "prettier": "^2.8.6",
     "vite": "^4.1.0"
   },
   "dependencies": {

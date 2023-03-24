@@ -12,7 +12,10 @@ export default class MicWave {
     this.canvasCtx = canvasDOM.getContext("2d");
     this.audioCtx = new AudioContext();
     this.analyser = this.audioCtx.createAnalyser();
-    this.analyser.fftSize = Math.pow(2, Math.round(Math.log(this.canvasWidth) / Math.log(2)));
+    this.analyser.fftSize = Math.pow(
+      2,
+      Math.round(Math.log(this.canvasWidth) / Math.log(2))
+    );
   }
   async start() {
     const stream = await navigator.mediaDevices.getUserMedia({
