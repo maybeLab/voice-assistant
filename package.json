@@ -10,12 +10,16 @@
     "lint": "prettier --write ."
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.14",
     "husky": "^8.0.3",
+    "postcss": "^8.4.21",
     "prettier": "^2.8.6",
+    "tailwindcss": "^3.2.7",
     "vite": "^4.1.0"
   },
   "dependencies": {
     "asn1.js": "^5.0.0",
+    "keyv-cache": "^2.0.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.25.1"
   }
 }

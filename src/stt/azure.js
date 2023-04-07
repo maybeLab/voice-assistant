@@ -5,7 +5,7 @@ import {
   ResultReason,
 } from "microsoft-cognitiveservices-speech-sdk";
 import {
-  getSpeechConfigByToken,
+  getSpeechConfigWithToken,
   writeResult,
   writeError,
   resetStatus,
@@ -18,7 +18,7 @@ export default async function ({
   sourceLanguages,
 }) {
   let isMic = type === "mic";
-  const speechConfig = await getSpeechConfigByToken();
+  const speechConfig = await getSpeechConfigWithToken();
 
   // We are done with the setup
   writeResult("Now recognizing from: " + type, sourceLanguages);

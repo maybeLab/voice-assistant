@@ -1,9 +1,19 @@
 import "./style.css";
+
 import AzureStt from "./src/stt/azure";
 import NativeStt from "./src/stt/native";
-import { getSupportedLocales, resetStatus, writeResult } from "./src/utils";
+import AzureTTS from "./src/tts/azure";
+import {
+  getSupportedLocales,
+  resetStatus,
+  writeResult,
+  DEFAULT_NATIVE_LANG,
+  getAzureSpeakers,
+  getAzureSpeakerStyles,
+  getAzureGender,
+} from "./src/utils";
 import Wave from "./src/wave";
-import html from "./src/html.jsx";
+import html from "./src/html.js";
 
 document.querySelector("#app").innerHTML = html;
 
@@ -32,6 +42,17 @@ document.querySelector("#input-file").addEventListener("change", (e) => {
     file: e.target.files[0],
     isContinuous: 0,
     sourceLanguages,
+  });
+});
+
+document.querySelector("#input-text-file").addEventListener("change", (e) => {
+  writeResult("Uploading...");
+  // const sourceLanguages = getSourceLanguages();
+  AzureTTS({
+    type: "file",
+    file: e.target.files[0],
+    isContinuous: 0,
+    // sourceLanguages,
   });
 });
 
@@ -71,7 +92,8 @@ document
   .querySelector("#more-language")
   .addEventListener("click", async function (e) {
     this.disabled = true;
-    const { locales } = await getSupportedLocales();
+    // TODO: combine with DomContentLoaded
+    const locales = await getSupportedLocales();
     locales
       .filter((e) => !/^(zh-CN|en-US)$/.test(e))
       .map((locale, index) => {
@@ -118,11 +140,25 @@ document.querySelector("#mic").addEventListener("click", async function (e) {
   }
 });
 
+document
+  .querySelector("#azure-textarea")
+  .addEventListener("submit", (event) => {
+    if (event.code === "Enter" || event.key === "Enter") {
+      event.preventDefault();
+      if (event.shiftKey || event.ctrlKey || event.metaKey) {
+        document.execCommand("insertText", false, "\n");
+      } else {
+        AzureTTS();
+      }
+    }
+  });
+
 document.addEventListener("DOMContentLoaded", async () => {
   const list = await navigator.mediaDevices.enumerateDevices();
+  // TODO: refactor for performance
   list
     .filter((e) => e.kind === "audioinput")
-    .map((e, i) => {
+    .forEach((e, i) => {
       document
         .querySelector("#micList")
         .insertAdjacentHTML(
@@ -138,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   list
     .filter((e) => e.kind === "audiooutput")
-    .map((e, i) => {
+    .forEach((e, i) => {
       document
         .querySelector("#speakerList")
         .insertAdjacentHTML(
@@ -152,4 +188,57 @@ document.addEventListener("DOMContentLoaded", async () => {
           }</label>`
         );
     });
+
+  document
+    .querySelector("#tts-azure-speaker")
+    .addEventListener("change", (e) => {
+      // tts-azure-style
+      getAzureSpeakerStyles(e.target.value).then((styles) => {
+        document.querySelector("#tts-azure-style").innerHTML = "";
+        if (!styles.length) {
+          document.querySelector("#tts-azure-style").disabled = true;
+          return;
+        }
+        document.querySelector("#tts-azure-style").insertAdjacentHTML(
+          "afterbegin",
+          styles.map((style) => `<option value="${style}">${style}</option>`)
+        );
+      });
+    });
+
+  document
+    .querySelector("#tts-azure-language")
+    .addEventListener("change", (e) => {
+      // tts-azure-speaker
+      getAzureSpeakers(e.target.value).then((voices) => {
+        document.querySelector("#tts-azure-speaker").innerHTML = "";
+        document.querySelector("#tts-azure-speaker").insertAdjacentHTML(
+          "afterbegin",
+          voices.map(
+            ({ shortName, localName, gender }) =>
+              `<option value="${shortName}">${localName} - ${getAzureGender(
+                gender
+              )}</option>`
+          )
+        );
+        document
+          .querySelector("#tts-azure-speaker")
+          .dispatchEvent(new Event("change"));
+      });
+    });
+
+  const locales = await getSupportedLocales();
+  document.querySelector("#tts-azure-language").insertAdjacentHTML(
+    "afterbegin",
+    locales.map(
+      (e) =>
+        `<option ${
+          e === DEFAULT_NATIVE_LANG ? "selected" : ""
+        } value="${e}">${e}</option>`
+    )
+  );
+  // trigger once
+  document
+    .querySelector("#tts-azure-language")
+    .dispatchEvent(new Event("change"));
 });

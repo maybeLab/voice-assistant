@@ -1,5 +1,5 @@
 import {
-  getSpeechConfigByToken,
+  getSpeechConfigWithToken,
   writeResult,
   writeError,
   resetStatus,

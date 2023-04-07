@@ -1,20 +1,19 @@
 import { langs as nativeLangsMap } from "./stt/native-lang.js";
-
-const DEFAULT_NATIVE_LANG = "en-US";
+import { DEFAULT_NATIVE_LANG } from "./utils";
 
 export default `
     <canvas id="waveCanvas"></canvas>
-    <fieldset id="micList">
-      <legend>Choose your audio input</legend>
+    <fieldset id="micList" class="border px-3 pt-1 pb-3">
+      <legend class="px-2">Choose your audio input</legend>
     </fieldset>
-    <fieldset id="speakerList" disabled>
-      <legend>Choose your audio output</legend>
+    <fieldset id="speakerList" disabled class="border px-3 pt-1 pb-3">
+      <legend class="px-2">Choose your audio output</legend>
     </fieldset>
-    <fieldset>
-      <legend>STT</legend>
+    <fieldset class="border px-3 pt-1 pb-3">
+      <legend class="px-2">Speech Recognition by Azure</legend>
       <label for="input-file">File: <input type="file" name="" id="input-file" accept=".wav" /></label>
       <fieldset id="sources">
-        <legend>Source</legend>
+        <legend class="px-2">Source</legend>
         <label for="language_default0">
           <input type="checkbox" id="language_default0" name="source-languages" value="en-US" checked />en-US
         </label>
@@ -23,8 +22,8 @@ export default `
         </label>
           <input type="button" id="more-language" value="More" />
       </fieldset>
-      <fieldset>
-        <legend>Microphone</legend>
+      <fieldset class="border px-3 pt-1 pb-3">
+        <legend class="px-2">Microphone</legend>
         Ways:
         <label for="continuous"><input id="continuous" type="radio" name="continuous" value="1"/>Continuous</label>
         <label for="once"><input id="once" type="radio" name="continuous" value="0" checked />Once</label>
@@ -33,8 +32,8 @@ export default `
         <input type="submit" value="End" id="stopMic" disabled class="primary" />
       </fieldset>
     </fieldset>
-    <fieldset>
-      <legend>STT for Native (Microphone only)</legend>
+    <fieldset class="border px-3 pt-1 pb-3">
+      <legend class="px-2">Speech Recognition by Native (Microphone only)</legend>
       <section>
         Ways:
         <label for="native-continuous"><input id="native-continuous" type="radio" name="native-continuous" checked value="1"/>Continuous</label>
@@ -58,8 +57,25 @@ export default `
         <input type="submit" value="End" id="native-stopMic" disabled class="primary" />
       </section>
     </fieldset>
-    <fieldset>
-        <legend>TTS</legend>
+    <fieldset class="border px-3 pt-1 pb-3">
+      <legend class="px-2">Speech Synthesis by Azure</legend>
+      <section class="flex gap-2">
+        <div class="flex-auto w-1/3">
+          <label for="tts-azure-language">Language</label><br/>
+          <select id="tts-azure-language" class="w-full text-ellipsis"></select>
+        </div>
+        <div class="flex-auto w-1/3">
+          <label for="tts-azure-speaker">Speaker</label><br/>
+          <select id="tts-azure-speaker" class="w-full text-ellipsis"></select>
+        </div>
+        <div class="flex-auto w-1/3">
+          <label for="tts-azure-style">Style</label><br/>
+          <select id="tts-azure-style" class="w-full text-ellipsis"></select>
+        </div>
+      </section>
+      input[tpye=range]
+      <label for="input-text-file">File: <input type="file" name="" id="input-text-file" accept=".md,.txt,.xml" /></label>
+      <textarea rows="4" placeholder="Please input text or SSML. Press Enter to Speak" id="azure-textarea" enterkeyhint="send" class="p-2"></textarea>
     </fieldset>
     <div id="result" contenteditable></div>
   `;
