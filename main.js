@@ -46,14 +46,11 @@ document.querySelector("#input-file").addEventListener("change", (e) => {
 });
 
 document.querySelector("#input-text-file").addEventListener("change", (e) => {
-  writeResult("Uploading...");
-  // const sourceLanguages = getSourceLanguages();
-  AzureTTS({
-    type: "file",
-    file: e.target.files[0],
-    isContinuous: 0,
-    // sourceLanguages,
-  });
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    document.querySelector("#azure-textarea").innerText = event.target.result;
+  };
+  reader.readAsText(e.target.files[0]);
 });
 
 document
@@ -141,19 +138,30 @@ document.querySelector("#mic").addEventListener("click", async function (e) {
 });
 
 document
-  .querySelector("#azure-textarea")
-  .addEventListener("submit", (event) => {
-    if (event.code === "Enter" || event.key === "Enter") {
-      event.preventDefault();
-      if (event.shiftKey || event.ctrlKey || event.metaKey) {
-        document.execCommand("insertText", false, "\n");
-      } else {
-        AzureTTS();
-      }
+  .querySelector("#azure-textarea-submit")
+  .addEventListener("click", (e) => {
+    e.target.disabled = true;
+    const text = document.querySelector("#azure-textarea").value?.trim();
+    if (text === "") {
+      return alert("Please input some content");
     }
+    AzureTTS(
+      text,
+      document.querySelector("#tts-azure-speaker").value,
+      document.querySelector("#tts-azure-style").value
+    );
+    e.target.disabled = false;
   });
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // ? for HTTP protocol
+  navigator.mediaDevices?.getUserMedia({ audio: true }).catch((err) => {
+    if (err.message.includes("Permission denied")) {
+      alert(
+        "If you are not allowed microphone use, You can't get audio devices list"
+      );
+    }
+  });
   const list = await navigator.mediaDevices.enumerateDevices();
   // TODO: refactor for performance
   list
@@ -195,8 +203,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       // tts-azure-style
       getAzureSpeakerStyles(e.target.value).then((styles) => {
         document.querySelector("#tts-azure-style").innerHTML = "";
+        document.querySelector("#tts-azure-style").disabled = !styles.length;
         if (!styles.length) {
-          document.querySelector("#tts-azure-style").disabled = true;
+          document
+            .querySelector("#tts-azure-style")
+            .insertAdjacentHTML(
+              "afterbegin",
+              "<option>no styles</option>"
+            );
           return;
         }
         document.querySelector("#tts-azure-style").insertAdjacentHTML(

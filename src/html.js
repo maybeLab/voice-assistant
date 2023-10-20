@@ -73,9 +73,11 @@ export default `
           <select id="tts-azure-style" class="w-full text-ellipsis"></select>
         </div>
       </section>
-      input[tpye=range]
-      <label for="input-text-file">File: <input type="file" name="" id="input-text-file" accept=".md,.txt,.xml" /></label>
+      <label for="input-text-file">File: <input type="file" name="" id="input-text-file" accept=".md,.txt,.xml,.ssml" /></label>
       <textarea rows="4" placeholder="Please input text or SSML. Press Enter to Speak" id="azure-textarea" enterkeyhint="send" class="p-2"></textarea>
+      <section>
+        <input type="submit" value="Submit" id="azure-textarea-submit" class="primary" />
+      </section>
     </fieldset>
     <div id="result" contenteditable></div>
   `;

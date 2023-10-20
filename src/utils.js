@@ -4,12 +4,16 @@ import {
 } from "microsoft-cognitiveservices-speech-sdk";
 import KeyvCache from "keyv-cache";
 
+import fetch from "./fetch-adapter";
+
 export const DEFAULT_NATIVE_LANG = "en-US";
 export const ONE_MONTH = 30 * 24 * 60 * 60 * 1e3;
 export const TEN_MINUTES = 10 * 60 * 1e3;
 export const ONE_DAY = 24 * 60 * 60 * 1e3;
 
-const CURRENT_REGION = "westus";
+const HOST_PREFIX = "//shoyuf.top/apis/azure";
+// const HOST_PREFIX = "//index.dev.local/apis/azure";
+const CURRENT_REGION = "southeastasia";
 const AZURE_TOKEN_KEY = "AZURE_TOKEN";
 const AZURE_LOCALES_KEY = "AZURE_LOCALES";
 const AZURE_SPEAKER_PREFIX = "AZURE_SPEAKER_";
@@ -40,9 +44,9 @@ export const getToken = async () => {
     return cachedToken;
   }
   return (
-    await fetch(
-      `https://fetoolsout.lz225.com/office/getAzureSpeechToken?region=${CURRENT_REGION}`
-    )
+    await fetch(`${HOST_PREFIX}/getAzureSpeechToken?region=${CURRENT_REGION}`, {
+      credentials: "include",
+    })
   )
     .json()
     .then((res) => {
@@ -57,9 +61,9 @@ export const getSupportedLocales = async () => {
     return cachedLocales;
   }
   return (
-    await fetch(
-      `https://fetoolsout.lz225.com/office/getLocales?region=${CURRENT_REGION}`
-    )
+    await fetch(`${HOST_PREFIX}/getLocales?region=${CURRENT_REGION}`, {
+      credentials: "include",
+    })
   )
     .json()
     .then((res) => {
@@ -120,4 +124,8 @@ export const getAzureGender = (gender) => {
     default:
       return "Unknown";
   }
+};
+
+export const isXML = function (str) {
+  return /^\s*<[\s\S]*>/.test(str);
 };
