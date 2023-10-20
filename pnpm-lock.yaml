@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  aegis-web-sdk:
+    specifier: ^1.38.3
+    version: 1.38.3
   asn1.js:
     specifier: ^5.0.0
     version: 5.4.1
@@ -278,6 +281,12 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
     dev: true
+
+  /aegis-web-sdk@1.38.3:
+    resolution: {integrity: sha512-5F7uRm/exGGwEK5SCtdWNpFMdJIDfPL/vQL04ngx/Yv4dn8GXrfhDcuJP4h4u5HNxD3LyCLsvqucaO6kFkAfIw==}
+    dependencies:
+      web-vitals: 3.5.0
+    dev: false
 
   /agent-base@5.1.1:
     resolution: {integrity: sha512-TMeqbNl2fMW0nMjTEPOwe3J/PRFP4vqeoNuQMG0HlMrtm5QxKqdvAkZ1pRBQ/ulIyDD5Yq0nJ7YbdD8ey0TO3g==}
@@ -1084,6 +1093,10 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /web-vitals@3.5.0:
+    resolution: {integrity: sha512-f5YnCHVG9Y6uLCePD4tY8bO/Ge15NPEQWtvm3tPzDKygloiqtb4SVqRHBcrIAqo2ztqX5XueqDn97zHF0LdT6w==}
+    dev: false
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
